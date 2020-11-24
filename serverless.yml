@@ -4,7 +4,7 @@ provider:
     name: aws
     runtime: nodejs12.x
     profile: serverlessUser
-    region: sa-east-1
+    region: us-east-1
     stage: dev
     environment:
         tableName: ${self:custom.tableName}
@@ -27,8 +27,8 @@ package:
 
 custom:
     tableName: player-points-table
-    bucketName: myserverlessprojectuploadbucket-199999993
-    imageUploadBucket: my-image-upload-bucket-demo-sws-199999993
+    bucketName: myserverlessprojectuploadbucket-1999999935
+    imageUploadBucket: my-image-upload-bucket-demo-sws-1999999935
 
 functions:
     getPlayerScore:
@@ -115,3 +115,20 @@ resources:
                             KeyType: HASH
                       Projection:
                           ProjectionType: ALL
+        CognitoUserPool:
+            Type: AWS::Cognito::UserPool
+            Properties:
+                UserPoolName: ${self:provider.stage}-user-pool
+                UsernameAttributes:
+                    - email
+                AutoVerifiedAttributes:
+                    - email
+        CognitoUserPoolClient:
+            Type: AWS::Cognito::UserPoolClient
+            Properties:
+                ClientName: ${self:provider.stage}-user-pool-client
+                UserPoolId:
+                    Ref: CognitoUserPool
+                ExplicitAuthFlows:
+                    - ADMIN_NO_SRP_AUTH
+                GenerateSecret: false         
