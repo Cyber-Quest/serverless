@@ -52,7 +52,7 @@ const Dynamo = {
 
         return documentClient.update(params).promise();
     },
-    
+
     query: async ({ tableName, index, queryKey, queryValue }) => {
         const params = {
             TableName: tableName,
@@ -64,6 +64,17 @@ const Dynamo = {
         };
 
         const res = await documentClient.query(params).promise();
+
+        return res.Items || [];
+    },
+
+    scan: async ({ tableName, filterExpression, expressionAttributes }) => {
+        const params = {
+            TableName: tableName,
+            FilterExpression: filterExpression,
+            ExpressionAttributeValues: expressionAttributes,
+        };
+        const res = await documentClient.scan(params).promise();
 
         return res.Items || [];
     },
